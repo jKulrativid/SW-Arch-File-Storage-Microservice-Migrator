@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  app:
+    container_name: app
+    image: cosmtrek/air
+    working_dir: /app
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - .:/app
+    command: -build.poll true
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    restart: always
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    ports:
+      - ${MINIO_S3_API_PORT}:9000
+      - ${MINIO_CONSOLE_PORT}:9001
+    volumes:
+      - ./minio_data:/data
+    command: server /data --console-address ":9001"
