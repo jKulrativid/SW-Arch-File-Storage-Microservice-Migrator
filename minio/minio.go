@@ -56,3 +56,11 @@ func (m *MinIO) UploadFile(objectName string, fileBuffer io.Reader, fileSize int
 	}
 	return info, nil
 }
+
+func (m *MinIO) DownloadFile(objectName string) (*minio.Object, error) {
+	obj, err := m.GetObject(context.Background(), m.bucketName, objectName, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return obj, nil
+}

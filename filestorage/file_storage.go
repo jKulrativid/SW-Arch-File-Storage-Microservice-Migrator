@@ -54,3 +54,50 @@ func (f *FileStorageService) Upload(stream filestorage_grpc.FileUploadService_Up
 		}
 	}
 }
+
+func (f *FileStorageService) Download(req *filestorage_grpc.FileDownloadRequest, stream filestorage_grpc.FileUploadService_DownloadServer) error {
+	obj, err := f.minio.DownloadFile(req.FileName)
+	if err != nil {
+		return err
+	}
+	defer obj.Close()
+
+	info, err := obj.Stat()
+	if err != nil {
+		return err
+	}
+
+	sendMetaData := false
+	fileSize := uint32(info.Size)
+	fileName := info.Key
+
+	buffer := make([]byte, 1024)
+	isEOF := false
+	for {
+		n, err := obj.Read(buffer)
+		if err == io.EOF {
+			if n == 0 {
+				break
+			} else {
+				isEOF = true
+			}
+		} else if err != nil {
+			return err
+		}
+		res := &filestorage_grpc.FileDownloadResponse{
+			FileContent: buffer[:n],
+		}
+		if !sendMetaData {
+			res.Size = &fileSize
+			res.FileName = &fileName
+			sendMetaData = true
+		}
+		if err := stream.Send(res); err != nil {
+			return err
+		}
+		if isEOF {
+			break
+		}
+	}
+	return nil
+}
