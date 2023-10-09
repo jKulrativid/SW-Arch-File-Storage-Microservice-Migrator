@@ -3,16 +3,20 @@ package app
 import (
 	"fmt"
 	"net"
+	"os"
 
 	"github.com/PongDev/SW-Arch-File-Storage-Microservice/filestorage"
+	"github.com/PongDev/SW-Arch-File-Storage-Microservice/grpc/subject"
 	db "github.com/PongDev/SW-Arch-File-Storage-Microservice/prisma/prisma-client"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
 type Server struct {
 	*grpc.Server
-	prismaClient *db.PrismaClient
+	prismaClient       *db.PrismaClient
+	grpcSubjectService *grpc.ClientConn
 }
 
 func NewServer() (*Server, error) {
@@ -21,10 +25,19 @@ func NewServer() (*Server, error) {
 		return nil, err
 	}
 
+	grpcSubjectService, err := grpc.Dial(
+		os.Getenv("SUBJECT_MICROSERVICE_ENDPOINT"),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if err != nil {
+		return nil, err
+	}
+	subjectServiceClient := subject.NewSubjectServiceClient(grpcSubjectService)
+
 	s := grpc.NewServer()
-	filestorage.RegisterFileUploadServiceServer(s, filestorage.NewFileStorageService(prismaClient))
+	filestorage.RegisterFileUploadServiceServer(s, filestorage.NewFileStorageService(prismaClient, subjectServiceClient))
 	reflection.Register(s)
-	return &Server{Server: s, prismaClient: prismaClient}, nil
+	return &Server{Server: s, prismaClient: prismaClient, grpcSubjectService: grpcSubjectService}, nil
 }
 
 func (s *Server) Start(port uint) error {
@@ -40,6 +53,9 @@ func (s *Server) Start(port uint) error {
 
 func (s *Server) Cleanup() error {
 	if err := s.prismaClient.Prisma.Disconnect(); err != nil {
+		return err
+	}
+	if err := s.grpcSubjectService.Close(); err != nil {
 		return err
 	}
 	return nil

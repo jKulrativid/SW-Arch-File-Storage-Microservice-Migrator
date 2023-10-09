@@ -5,8 +5,10 @@ import (
 	"context"
 	"errors"
 	"io"
+	"strconv"
 
 	filestorage_grpc "github.com/PongDev/SW-Arch-File-Storage-Microservice/grpc/filestorage"
+	"github.com/PongDev/SW-Arch-File-Storage-Microservice/grpc/subject"
 	"github.com/PongDev/SW-Arch-File-Storage-Microservice/minio"
 	db "github.com/PongDev/SW-Arch-File-Storage-Microservice/prisma/prisma-client"
 	"github.com/PongDev/SW-Arch-File-Storage-Microservice/repository"
@@ -16,27 +18,29 @@ import (
 
 type FileStorageService struct {
 	filestorage_grpc.UnimplementedFileUploadServiceServer
-	minio               minio.MinIO
-	shareFileRepo       repository.ShareFileRepository
-	bookmarkFileRepo    repository.BookmarkFileRepository
-	fileInformationRepo repository.FileInformationRepository
+	minio                minio.MinIO
+	subjectServiceClient subject.SubjectServiceClient
+	shareFileRepo        repository.ShareFileRepository
+	bookmarkFileRepo     repository.BookmarkFileRepository
+	fileInformationRepo  repository.FileInformationRepository
 }
 
 func RegisterFileUploadServiceServer(s grpc.ServiceRegistrar, srv filestorage_grpc.FileUploadServiceServer) {
 	s.RegisterService(&filestorage_grpc.FileUploadService_ServiceDesc, srv)
 }
 
-func NewFileStorageService(prismaClient *db.PrismaClient) *FileStorageService {
+func NewFileStorageService(prismaClient *db.PrismaClient, subjectServiceClient subject.SubjectServiceClient) *FileStorageService {
 	minio, err := minio.NewMinIOClient()
 	if err != nil {
 		panic(err)
 	}
 
 	return &FileStorageService{
-		minio:               minio,
-		shareFileRepo:       repository.NewShareFileRepository(prismaClient),
-		bookmarkFileRepo:    repository.NewBookmarkFileRepository(prismaClient),
-		fileInformationRepo: repository.NewFileInformationRepository(prismaClient),
+		minio:                minio,
+		subjectServiceClient: subjectServiceClient,
+		shareFileRepo:        repository.NewShareFileRepository(prismaClient),
+		bookmarkFileRepo:     repository.NewBookmarkFileRepository(prismaClient),
+		fileInformationRepo:  repository.NewFileInformationRepository(prismaClient),
 	}
 }
 
@@ -54,6 +58,24 @@ func (f *FileStorageService) IsUserCanAccessFile(ctx context.Context, userID, fi
 		f.shareFileRepo.CheckIsFileShareWithUser(ctx, fileID, "*")
 }
 
+func (f *FileStorageService) validateSubject(ctx context.Context, subjectId string) bool {
+	subjectIdInteger, err := strconv.ParseInt(subjectId, 10, 64)
+	if err != nil {
+		return false
+	}
+	result, err := f.subjectServiceClient.ValidateSubjectId(ctx, &subject.ValidateSubjectIdRequest{
+		Id: subjectIdInteger,
+	})
+	if err != nil {
+		return false
+	}
+
+	if !result.Valid {
+		return false
+	}
+	return true
+}
+
 func (f *FileStorageService) Upload(stream filestorage_grpc.FileUploadService_UploadServer) error {
 	fileBuffer := &bytes.Buffer{}
 	fileName := ""
@@ -65,6 +87,10 @@ func (f *FileStorageService) Upload(stream filestorage_grpc.FileUploadService_Up
 		if err == io.EOF {
 			if userID == "" || subjectId == "" {
 				return errors.New("Empty user_id or subject_id")
+			}
+
+			if !f.validateSubject(stream.Context(), subjectId) {
+				return errors.New("Invalid subject_id")
 			}
 
 			fileID, err := f.fileInformationRepo.CreateFileInformation(context.Background(), uuid.NewString(), subjectId, userID, fileName)
