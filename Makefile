@@ -7,11 +7,10 @@ help:
 
 .PHONY: go-grpc-generate
 go-grpc-generate: ## generate golang grpc code
-	@if [ ! -d "filestorage/grpc" ]; then\
-		mkdir -p filestorage/grpc;\
+	@if [ ! -d "grpc" ]; then\
+		mkdir -p grpc;\
 	fi
-	@protoc file_storage.proto --go_out=./filestorage/grpc --go_opt=paths=source_relative
-	@protoc file_storage.proto --go-grpc_out=./filestorage/grpc --go-grpc_opt=paths=source_relative
+	@protoc -I ./proto ./proto/*.proto --go_out=./grpc --go-grpc_out=./grpc
 
 .PHONY: prisma-migrate-dev
 prisma-migrate-dev: ## generate prisma migration locally

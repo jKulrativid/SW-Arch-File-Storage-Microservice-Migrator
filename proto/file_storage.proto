@@ -2,19 +2,18 @@ syntax = "proto3";
 
 package filestorage;
 
-// protolint:disable MAX_LINE_LENGTH
-option go_package = "github.com/PongDev/SW-Arch-File-Storage-Microservice/filestorage/grpc";
+option go_package = "./filestorage";
 
 message FileUploadRequest {
-  bytes file_content        = 1;
-  optional string file_name = 2;
-  optional string user_id            = 3;
-  optional string subject_id         = 4;
+  bytes file_content         = 1;
+  optional string file_name  = 2;
+  optional string user_id    = 3;
+  optional string subject_id = 4;
 }
 
 message FileUploadResponse {
   string file_id = 1;
-  uint32 size      = 2;
+  uint32 size    = 2;
 }
 
 message FileDownloadRequest {

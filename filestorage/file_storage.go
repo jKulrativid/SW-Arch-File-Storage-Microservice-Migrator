@@ -6,7 +6,7 @@ import (
 	"errors"
 	"io"
 
-	filestorage_grpc "github.com/PongDev/SW-Arch-File-Storage-Microservice/filestorage/grpc"
+	filestorage_grpc "github.com/PongDev/SW-Arch-File-Storage-Microservice/grpc/filestorage"
 	"github.com/PongDev/SW-Arch-File-Storage-Microservice/minio"
 	db "github.com/PongDev/SW-Arch-File-Storage-Microservice/prisma/prisma-client"
 	"github.com/PongDev/SW-Arch-File-Storage-Microservice/repository"

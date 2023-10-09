@@ -4,7 +4,7 @@
 // - protoc             v4.24.3
 // source: file_storage.proto
 
-package grpc
+package filestorage
 
 import (
 	context "context"
