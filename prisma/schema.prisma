@@ -1,0 +1,36 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DB_URL")
+}
+
+generator db {
+    provider = "go run github.com/steebchen/prisma-client-go"
+    output   = "prisma-client"
+}
+
+model FileInformation {
+    id           String         @id @default(uuid())
+    subjectID    String
+    ownerUserID  String
+    fileName     String
+    ShareFile    ShareFile[]
+    BookmarkFile BookmarkFile[]
+}
+
+model ShareFile {
+    userID String
+    fileID String
+
+    file FileInformation @relation(fields: [fileID], references: [id])
+
+    @@id([userID, fileID])
+}
+
+model BookmarkFile {
+    userID String
+    fileID String
+
+    file FileInformation @relation(fields: [fileID], references: [id])
+
+    @@id([userID, fileID])
+}

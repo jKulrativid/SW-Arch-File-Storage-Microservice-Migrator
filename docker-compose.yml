@@ -9,7 +9,7 @@ services:
       - ${PORT}:${PORT}
     volumes:
       - .:/app
-    command: -build.poll true
+    command: -build.poll true -build.exclude_dir "tmp,minio_data,postgres_data,prisma/prisma-client" -build.pre_cmd "make prisma-generate" -build.include_ext "go,prisma,env"
   minio:
     image: quay.io/minio/minio
     container_name: minio
@@ -23,3 +23,20 @@ services:
     volumes:
       - ./minio_data:/data
     command: server /data --console-address ":9001"
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${DB_NAME} -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - "./postgres_data:/var/lib/postgresql/data"

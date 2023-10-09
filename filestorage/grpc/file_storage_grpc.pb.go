@@ -24,6 +24,11 @@ const _ = grpc.SupportPackageIsVersion7
 type FileUploadServiceClient interface {
 	Upload(ctx context.Context, opts ...grpc.CallOption) (FileUploadService_UploadClient, error)
 	Download(ctx context.Context, in *FileDownloadRequest, opts ...grpc.CallOption) (FileUploadService_DownloadClient, error)
+	Delete(ctx context.Context, in *FileDeleteRequest, opts ...grpc.CallOption) (*FileDeleteResponse, error)
+	ShareFile(ctx context.Context, in *ShareFileRequest, opts ...grpc.CallOption) (*ShareFileResponse, error)
+	CreateBookmarkFile(ctx context.Context, in *CreateBookmarkFileRequest, opts ...grpc.CallOption) (*CreateBookmarkFileResponse, error)
+	DeleteBookmarkFile(ctx context.Context, in *DeleteBookmarkFileRequest, opts ...grpc.CallOption) (*DeleteBookmarkFileResponse, error)
+	GetBookmarkFiles(ctx context.Context, in *GetBookmarkFilesRequest, opts ...grpc.CallOption) (*GetBookmarkFilesResponse, error)
 }
 
 type fileUploadServiceClient struct {
@@ -100,12 +105,62 @@ func (x *fileUploadServiceDownloadClient) Recv() (*FileDownloadResponse, error) 
 	return m, nil
 }
 
+func (c *fileUploadServiceClient) Delete(ctx context.Context, in *FileDeleteRequest, opts ...grpc.CallOption) (*FileDeleteResponse, error) {
+	out := new(FileDeleteResponse)
+	err := c.cc.Invoke(ctx, "/filestorage.FileUploadService/Delete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *fileUploadServiceClient) ShareFile(ctx context.Context, in *ShareFileRequest, opts ...grpc.CallOption) (*ShareFileResponse, error) {
+	out := new(ShareFileResponse)
+	err := c.cc.Invoke(ctx, "/filestorage.FileUploadService/ShareFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *fileUploadServiceClient) CreateBookmarkFile(ctx context.Context, in *CreateBookmarkFileRequest, opts ...grpc.CallOption) (*CreateBookmarkFileResponse, error) {
+	out := new(CreateBookmarkFileResponse)
+	err := c.cc.Invoke(ctx, "/filestorage.FileUploadService/CreateBookmarkFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *fileUploadServiceClient) DeleteBookmarkFile(ctx context.Context, in *DeleteBookmarkFileRequest, opts ...grpc.CallOption) (*DeleteBookmarkFileResponse, error) {
+	out := new(DeleteBookmarkFileResponse)
+	err := c.cc.Invoke(ctx, "/filestorage.FileUploadService/DeleteBookmarkFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *fileUploadServiceClient) GetBookmarkFiles(ctx context.Context, in *GetBookmarkFilesRequest, opts ...grpc.CallOption) (*GetBookmarkFilesResponse, error) {
+	out := new(GetBookmarkFilesResponse)
+	err := c.cc.Invoke(ctx, "/filestorage.FileUploadService/GetBookmarkFiles", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileUploadServiceServer is the server API for FileUploadService service.
 // All implementations must embed UnimplementedFileUploadServiceServer
 // for forward compatibility
 type FileUploadServiceServer interface {
 	Upload(FileUploadService_UploadServer) error
 	Download(*FileDownloadRequest, FileUploadService_DownloadServer) error
+	Delete(context.Context, *FileDeleteRequest) (*FileDeleteResponse, error)
+	ShareFile(context.Context, *ShareFileRequest) (*ShareFileResponse, error)
+	CreateBookmarkFile(context.Context, *CreateBookmarkFileRequest) (*CreateBookmarkFileResponse, error)
+	DeleteBookmarkFile(context.Context, *DeleteBookmarkFileRequest) (*DeleteBookmarkFileResponse, error)
+	GetBookmarkFiles(context.Context, *GetBookmarkFilesRequest) (*GetBookmarkFilesResponse, error)
 	mustEmbedUnimplementedFileUploadServiceServer()
 }
 
@@ -118,6 +173,21 @@ func (UnimplementedFileUploadServiceServer) Upload(FileUploadService_UploadServe
 }
 func (UnimplementedFileUploadServiceServer) Download(*FileDownloadRequest, FileUploadService_DownloadServer) error {
 	return status.Errorf(codes.Unimplemented, "method Download not implemented")
+}
+func (UnimplementedFileUploadServiceServer) Delete(context.Context, *FileDeleteRequest) (*FileDeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedFileUploadServiceServer) ShareFile(context.Context, *ShareFileRequest) (*ShareFileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ShareFile not implemented")
+}
+func (UnimplementedFileUploadServiceServer) CreateBookmarkFile(context.Context, *CreateBookmarkFileRequest) (*CreateBookmarkFileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBookmarkFile not implemented")
+}
+func (UnimplementedFileUploadServiceServer) DeleteBookmarkFile(context.Context, *DeleteBookmarkFileRequest) (*DeleteBookmarkFileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBookmarkFile not implemented")
+}
+func (UnimplementedFileUploadServiceServer) GetBookmarkFiles(context.Context, *GetBookmarkFilesRequest) (*GetBookmarkFilesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBookmarkFiles not implemented")
 }
 func (UnimplementedFileUploadServiceServer) mustEmbedUnimplementedFileUploadServiceServer() {}
 
@@ -179,13 +249,124 @@ func (x *fileUploadServiceDownloadServer) Send(m *FileDownloadResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _FileUploadService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FileDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileUploadServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/filestorage.FileUploadService/Delete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileUploadServiceServer).Delete(ctx, req.(*FileDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FileUploadService_ShareFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ShareFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileUploadServiceServer).ShareFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/filestorage.FileUploadService/ShareFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileUploadServiceServer).ShareFile(ctx, req.(*ShareFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FileUploadService_CreateBookmarkFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateBookmarkFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileUploadServiceServer).CreateBookmarkFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/filestorage.FileUploadService/CreateBookmarkFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileUploadServiceServer).CreateBookmarkFile(ctx, req.(*CreateBookmarkFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FileUploadService_DeleteBookmarkFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBookmarkFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileUploadServiceServer).DeleteBookmarkFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/filestorage.FileUploadService/DeleteBookmarkFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileUploadServiceServer).DeleteBookmarkFile(ctx, req.(*DeleteBookmarkFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FileUploadService_GetBookmarkFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBookmarkFilesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileUploadServiceServer).GetBookmarkFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/filestorage.FileUploadService/GetBookmarkFiles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileUploadServiceServer).GetBookmarkFiles(ctx, req.(*GetBookmarkFilesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FileUploadService_ServiceDesc is the grpc.ServiceDesc for FileUploadService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var FileUploadService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "filestorage.FileUploadService",
 	HandlerType: (*FileUploadServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Delete",
+			Handler:    _FileUploadService_Delete_Handler,
+		},
+		{
+			MethodName: "ShareFile",
+			Handler:    _FileUploadService_ShareFile_Handler,
+		},
+		{
+			MethodName: "CreateBookmarkFile",
+			Handler:    _FileUploadService_CreateBookmarkFile_Handler,
+		},
+		{
+			MethodName: "DeleteBookmarkFile",
+			Handler:    _FileUploadService_DeleteBookmarkFile_Handler,
+		},
+		{
+			MethodName: "GetBookmarkFiles",
+			Handler:    _FileUploadService_GetBookmarkFiles_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "Upload",

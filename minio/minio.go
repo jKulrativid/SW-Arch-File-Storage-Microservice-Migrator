@@ -5,17 +5,23 @@ import (
 	"io"
 	"log"
 
-	"github.com/PongDev/Go-gRPC-Storage/config"
+	"github.com/PongDev/SW-Arch-File-Storage-Microservice/config"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
-type MinIO struct {
+type MinIO interface {
+	UploadFile(objectName string, fileBuffer io.Reader, fileSize int64, contentType string) (minio.UploadInfo, error)
+	DownloadFile(objectName string) (*minio.Object, error)
+	DeleteFile(objectName string) error
+}
+
+type minIO struct {
 	*minio.Client
 	bucketName string
 }
 
-func NewMinIOClient() (*MinIO, error) {
+func NewMinIOClient() (MinIO, error) {
 	ctx := context.Background()
 	endpoint := config.Env.MINIO_ENDPOINT
 	accessKey := config.Env.MINIO_ACCESS_KEY
@@ -44,10 +50,10 @@ func NewMinIOClient() (*MinIO, error) {
 	} else {
 		log.Printf("Successfully created bucket: %s\n", bucketName)
 	}
-	return &MinIO{Client: minioClient, bucketName: bucketName}, nil
+	return &minIO{Client: minioClient, bucketName: bucketName}, nil
 }
 
-func (m *MinIO) UploadFile(objectName string, fileBuffer io.Reader, fileSize int64, contentType string) (minio.UploadInfo, error) {
+func (m *minIO) UploadFile(objectName string, fileBuffer io.Reader, fileSize int64, contentType string) (minio.UploadInfo, error) {
 	info, err := m.PutObject(context.Background(), m.bucketName, objectName, fileBuffer, fileSize, minio.PutObjectOptions{
 		ContentType: contentType,
 	})
@@ -57,10 +63,14 @@ func (m *MinIO) UploadFile(objectName string, fileBuffer io.Reader, fileSize int
 	return info, nil
 }
 
-func (m *MinIO) DownloadFile(objectName string) (*minio.Object, error) {
+func (m *minIO) DownloadFile(objectName string) (*minio.Object, error) {
 	obj, err := m.GetObject(context.Background(), m.bucketName, objectName, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, err
 	}
 	return obj, nil
+}
+
+func (m *minIO) DeleteFile(objectName string) error {
+	return m.RemoveObject(context.Background(), m.bucketName, objectName, minio.RemoveObjectOptions{})
 }
