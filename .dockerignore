@@ -1,0 +1,7 @@
+**/.DS_Store
+**/.env
+tmp
+minio_data
+postgres_data
+prisma/prisma-client
+grpc
