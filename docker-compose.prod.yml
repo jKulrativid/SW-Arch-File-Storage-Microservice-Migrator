@@ -3,16 +3,21 @@ version: "3"
 services:
   app:
     container_name: app
-    image: cosmtrek/air
-    working_dir: /app
+    restart: always
+    build: .
     ports:
       - ${PORT}:${PORT}
-    volumes:
-      - .:/app
-    command: -build.poll true -build.exclude_dir "tmp,minio_data,postgres_data,prisma/prisma-client" -build.pre_cmd "make prisma-generate" -build.include_ext "go,prisma,env"
     depends_on:
       postgres:
         condition: service_healthy
+    environment:
+      - PORT=${PORT}
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
+      - MINIO_BUCKET=${MINIO_BUCKET}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - SUBJECT_MICROSERVICE_ENDPOINT=${SUBJECT_MICROSERVICE_ENDPOINT}
+      - DB_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
   minio:
     image: quay.io/minio/minio
     container_name: minio
