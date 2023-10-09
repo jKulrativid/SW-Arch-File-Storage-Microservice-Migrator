@@ -3,8 +3,8 @@ package app
 import (
 	"fmt"
 	"net"
-	"os"
 
+	"github.com/PongDev/SW-Arch-File-Storage-Microservice/config"
 	"github.com/PongDev/SW-Arch-File-Storage-Microservice/filestorage"
 	"github.com/PongDev/SW-Arch-File-Storage-Microservice/grpc/subject"
 	db "github.com/PongDev/SW-Arch-File-Storage-Microservice/prisma/prisma-client"
@@ -26,7 +26,7 @@ func NewServer() (*Server, error) {
 	}
 
 	grpcSubjectService, err := grpc.Dial(
-		os.Getenv("SUBJECT_MICROSERVICE_ENDPOINT"),
+		config.Env.SUBJECT_MICROSERVICE_ENDPOINT,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
