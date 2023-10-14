@@ -29,6 +29,7 @@ type FileUploadServiceClient interface {
 	CreateBookmarkFile(ctx context.Context, in *CreateBookmarkFileRequest, opts ...grpc.CallOption) (*CreateBookmarkFileResponse, error)
 	DeleteBookmarkFile(ctx context.Context, in *DeleteBookmarkFileRequest, opts ...grpc.CallOption) (*DeleteBookmarkFileResponse, error)
 	GetBookmarkFiles(ctx context.Context, in *GetBookmarkFilesRequest, opts ...grpc.CallOption) (*GetBookmarkFilesResponse, error)
+	SearchFile(ctx context.Context, in *SearchFileRequest, opts ...grpc.CallOption) (*SearchFileResponse, error)
 }
 
 type fileUploadServiceClient struct {
@@ -150,6 +151,15 @@ func (c *fileUploadServiceClient) GetBookmarkFiles(ctx context.Context, in *GetB
 	return out, nil
 }
 
+func (c *fileUploadServiceClient) SearchFile(ctx context.Context, in *SearchFileRequest, opts ...grpc.CallOption) (*SearchFileResponse, error) {
+	out := new(SearchFileResponse)
+	err := c.cc.Invoke(ctx, "/filestorage.FileUploadService/SearchFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileUploadServiceServer is the server API for FileUploadService service.
 // All implementations must embed UnimplementedFileUploadServiceServer
 // for forward compatibility
@@ -161,6 +171,7 @@ type FileUploadServiceServer interface {
 	CreateBookmarkFile(context.Context, *CreateBookmarkFileRequest) (*CreateBookmarkFileResponse, error)
 	DeleteBookmarkFile(context.Context, *DeleteBookmarkFileRequest) (*DeleteBookmarkFileResponse, error)
 	GetBookmarkFiles(context.Context, *GetBookmarkFilesRequest) (*GetBookmarkFilesResponse, error)
+	SearchFile(context.Context, *SearchFileRequest) (*SearchFileResponse, error)
 	mustEmbedUnimplementedFileUploadServiceServer()
 }
 
@@ -188,6 +199,9 @@ func (UnimplementedFileUploadServiceServer) DeleteBookmarkFile(context.Context, 
 }
 func (UnimplementedFileUploadServiceServer) GetBookmarkFiles(context.Context, *GetBookmarkFilesRequest) (*GetBookmarkFilesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBookmarkFiles not implemented")
+}
+func (UnimplementedFileUploadServiceServer) SearchFile(context.Context, *SearchFileRequest) (*SearchFileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchFile not implemented")
 }
 func (UnimplementedFileUploadServiceServer) mustEmbedUnimplementedFileUploadServiceServer() {}
 
@@ -339,6 +353,24 @@ func _FileUploadService_GetBookmarkFiles_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FileUploadService_SearchFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileUploadServiceServer).SearchFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/filestorage.FileUploadService/SearchFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileUploadServiceServer).SearchFile(ctx, req.(*SearchFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FileUploadService_ServiceDesc is the grpc.ServiceDesc for FileUploadService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -365,6 +397,10 @@ var FileUploadService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBookmarkFiles",
 			Handler:    _FileUploadService_GetBookmarkFiles_Handler,
+		},
+		{
+			MethodName: "SearchFile",
+			Handler:    _FileUploadService_SearchFile_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

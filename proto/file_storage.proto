@@ -72,6 +72,16 @@ message GetBookmarkFilesResponse {
   repeated string file_ids = 1;
 }
 
+message SearchFileRequest {
+  string subject_id    = 1;
+  string owner_user_id = 2;
+  string file_name     = 3;
+}
+
+message SearchFileResponse {
+  repeated string file_ids = 1;
+}
+
 service FileUploadService {
   rpc Upload(stream FileUploadRequest) returns (FileUploadResponse);
   rpc Download(FileDownloadRequest) returns (stream FileDownloadResponse);
@@ -83,4 +93,5 @@ service FileUploadService {
       returns (DeleteBookmarkFileResponse);
   rpc GetBookmarkFiles(GetBookmarkFilesRequest)
       returns (GetBookmarkFilesResponse);
+  rpc SearchFile(SearchFileRequest) returns (SearchFileResponse);
 }
