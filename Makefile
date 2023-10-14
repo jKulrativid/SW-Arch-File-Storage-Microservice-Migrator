@@ -27,3 +27,9 @@ prisma-generate: ## generate prisma go client
 .PHONY: test
 test: ## run golang tests
 	go test ./...
+
+.PHONY: load-test-upload-file
+load-test-upload-file: ## run load test upload file
+	ghz --config ./load_test/upload_1MB.json localhost:${PORT}
+	ghz --config ./load_test/upload_2MB.json localhost:${PORT}
+	ghz --config ./load_test/upload_4MB.json localhost:${PORT}

@@ -1,0 +1,16 @@
+{
+  "proto": "./proto/file_storage.proto",
+  "call": "filestorage.FileUploadService.Upload",
+  "insecure": true,
+  "data": [
+    {
+      "file_content": "{{randomString 1024 | repeat 1024 | b64enc}}",
+      "file_name": "test_2MB.txt",
+      "user_id": "1",
+      "subject_id": "1"
+    },
+    {
+      "file_content": "{{randomString 1024 | repeat 1024 | b64enc}}"
+    }
+  ]
+}
