@@ -79,7 +79,10 @@ message SearchFileRequest {
 }
 
 message SearchFileResponse {
-  repeated string file_ids = 1;
+  repeated string file_ids       = 1;
+  repeated string file_names     = 2;
+  repeated string subject_ids    = 3;
+  repeated string owner_user_ids = 4;
 }
 
 service FileUploadService {

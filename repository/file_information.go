@@ -10,7 +10,7 @@ type FileInformationRepository interface {
 	GetFileInformation(ctx context.Context, id string) (*db.FileInformationModel, error)
 	CreateFileInformation(ctx context.Context, id, subjectID, ownerUserID, fileName string) (string, error)
 	DeleteFileInformation(ctx context.Context, id string) (string, error)
-	SearchFileInformation(ctx context.Context, subjectID, ownerUserID, fileName string) ([]string, error)
+	SearchFileInformation(ctx context.Context, subjectID, ownerUserID, fileName string) ([]db.FileInformationModel, error)
 }
 
 type fileInformationRepository struct {
@@ -57,7 +57,7 @@ func (r *fileInformationRepository) DeleteFileInformation(ctx context.Context, i
 	return result.ID, nil
 }
 
-func (r *fileInformationRepository) SearchFileInformation(ctx context.Context, subjectID, ownerUserID, fileName string) ([]string, error) {
+func (r *fileInformationRepository) SearchFileInformation(ctx context.Context, subjectID, ownerUserID, fileName string) ([]db.FileInformationModel, error) {
 	queryParams := []db.FileInformationWhereParam{}
 
 	if subjectID != "" {
@@ -74,9 +74,5 @@ func (r *fileInformationRepository) SearchFileInformation(ctx context.Context, s
 		return nil, err
 	}
 
-	fileIDs := []string{}
-	for _, fileInformation := range result {
-		fileIDs = append(fileIDs, fileInformation.ID)
-	}
-	return fileIDs, nil
+	return result, nil
 }

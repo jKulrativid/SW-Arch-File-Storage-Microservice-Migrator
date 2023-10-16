@@ -34,14 +34,27 @@ func TestFileInformationRepository(t *testing.T) {
 	var subjectIDs []string
 	var fileNames []string
 	var nonExistsFileID string
+	var fileInfos []db.FileInformationModel
 
 	fileIDs = []string{"a5245a0c-84b9-4dcd-9e67-791498274cc4", "848ed726-1a73-4f65-90a4-eaa4be449bf2"}
 	sort.Strings(fileIDs)
 	subjectIDs = []string{"subject_id_1", "subject_id_2"}
 	fileNames = []string{"file_1", "file_2"}
+	fileInfos = []db.FileInformationModel{}
 
 	userID = "6073cd8a-39f3-43d2-99ed-4d5e826229c1"
 	nonExistsFileID = "c566acce-8eb5-4893-81d7-e93104b288e4"
+
+	for idx, fileID := range fileIDs {
+		fileInfos = append(fileInfos, db.FileInformationModel{
+			InnerFileInformation: db.InnerFileInformation{
+				ID:          fileID,
+				SubjectID:   subjectIDs[idx],
+				OwnerUserID: userID,
+				FileName:    fileNames[idx],
+			},
+		})
+	}
 
 	// Test CreateFileInformation
 	for idx, fileID := range fileIDs {
@@ -98,39 +111,47 @@ func TestFileInformationRepository(t *testing.T) {
 
 	// Test SearchFileInformation
 	resultFileInfos, err := fileInformationRepo.SearchFileInformation(ctx, "subject_id", userID, "file_nameX")
-	if err != nil || !reflect.DeepEqual(resultFileInfos, []string{}) {
-		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfo, []string{})
+	if err != nil || !reflect.DeepEqual(resultFileInfos, []db.FileInformationModel{}) {
+		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfo, []db.FileInformationModel{})
 	}
 	resultFileInfos, err = fileInformationRepo.SearchFileInformation(ctx, "", userID, "")
-	sort.Strings(resultFileInfos)
-	if !reflect.DeepEqual(resultFileInfos, fileIDs) {
-		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, fileIDs)
+	sort.Slice(resultFileInfos, func(i, j int) bool {
+		return resultFileInfos[i].ID < resultFileInfos[j].ID
+	})
+	if !reflect.DeepEqual(resultFileInfos, fileInfos) {
+		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, fileInfos)
 	}
 	resultFileInfos, err = fileInformationRepo.SearchFileInformation(ctx, "", "", "")
-	sort.Strings(resultFileInfos)
-	if !reflect.DeepEqual(resultFileInfos, fileIDs) {
-		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, fileIDs)
+	sort.Slice(resultFileInfos, func(i, j int) bool {
+		return resultFileInfos[i].ID < resultFileInfos[j].ID
+	})
+	if !reflect.DeepEqual(resultFileInfos, fileInfos) {
+		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, fileInfos)
 	}
 	resultFileInfos, err = fileInformationRepo.SearchFileInformation(ctx, subjectIDs[0], "", "")
-	if err != nil || len(resultFileInfos) != 1 || resultFileInfos[0] != fileIDs[0] {
-		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, []string{fileIDs[0]})
+	if err != nil || len(resultFileInfos) != 1 || !reflect.DeepEqual(resultFileInfos[0], fileInfos[0]) {
+		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, []db.FileInformationModel{fileInfos[0]})
 	}
 	resultFileInfos, err = fileInformationRepo.SearchFileInformation(ctx, "", "", fileNames[1])
-	if err != nil || len(resultFileInfos) != 1 || resultFileInfos[0] != fileIDs[1] {
-		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, []string{fileIDs[1]})
+	if err != nil || len(resultFileInfos) != 1 || !reflect.DeepEqual(resultFileInfos[0], fileInfos[1]) {
+		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, []db.FileInformationModel{fileInfos[1]})
 	}
 	resultFileInfos, err = fileInformationRepo.SearchFileInformation(ctx, subjectIDs[0], "", "file_")
-	if err != nil || len(resultFileInfos) != 1 || resultFileInfos[0] != fileIDs[0] {
-		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, []string{fileIDs[0]})
+	if err != nil || len(resultFileInfos) != 1 || !reflect.DeepEqual(resultFileInfos[0], fileInfos[0]) {
+		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, []db.FileInformationModel{fileInfos[0]})
 	}
 	resultFileInfos, err = fileInformationRepo.SearchFileInformation(ctx, "", "", "file_")
-	sort.Strings(resultFileInfos)
-	if !reflect.DeepEqual(resultFileInfos, fileIDs) {
-		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, fileIDs)
+	sort.Slice(resultFileInfos, func(i, j int) bool {
+		return resultFileInfos[i].ID < resultFileInfos[j].ID
+	})
+	if !reflect.DeepEqual(resultFileInfos, fileInfos) {
+		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, fileInfos)
 	}
 	resultFileInfos, err = fileInformationRepo.SearchFileInformation(ctx, "", userID, "file_")
-	sort.Strings(resultFileInfos)
-	if !reflect.DeepEqual(resultFileInfos, fileIDs) {
-		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, fileIDs)
+	sort.Slice(resultFileInfos, func(i, j int) bool {
+		return resultFileInfos[i].ID < resultFileInfos[j].ID
+	})
+	if !reflect.DeepEqual(resultFileInfos, fileInfos) {
+		t.Fatalf("SearchFileInformation error: %v expected %v\n", resultFileInfos, fileInfos)
 	}
 }

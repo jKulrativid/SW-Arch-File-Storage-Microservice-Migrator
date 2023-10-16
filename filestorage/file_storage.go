@@ -233,11 +233,26 @@ func (f *FileStorageService) GetBookmarkFiles(ctx context.Context, req *filestor
 }
 
 func (f *FileStorageService) SearchFile(ctx context.Context, req *filestorage_grpc.SearchFileRequest) (*filestorage_grpc.SearchFileResponse, error) {
-	fileIDs, err := f.fileInformationRepo.SearchFileInformation(ctx, req.SubjectId, req.OwnerUserId, req.FileName)
+	result, err := f.fileInformationRepo.SearchFileInformation(ctx, req.SubjectId, req.OwnerUserId, req.FileName)
 	if err != nil {
 		return nil, err
 	}
+
+	fileIDs := []string{}
+	fileNames := []string{}
+	subjectIDs := []string{}
+	ownerUserIDs := []string{}
+	for _, fileInformation := range result {
+		fileIDs = append(fileIDs, fileInformation.ID)
+		fileNames = append(fileNames, fileInformation.FileName)
+		subjectIDs = append(subjectIDs, fileInformation.SubjectID)
+		ownerUserIDs = append(ownerUserIDs, fileInformation.OwnerUserID)
+	}
+
 	return &filestorage_grpc.SearchFileResponse{
-		FileIds: fileIDs,
+		FileIds:      fileIDs,
+		FileNames:    fileNames,
+		SubjectIds:   subjectIDs,
+		OwnerUserIds: ownerUserIDs,
 	}, nil
 }

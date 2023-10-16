@@ -45,7 +45,7 @@ func NewSubjectServiceClient(cc grpc.ClientConnInterface) SubjectServiceClient {
 
 func (c *subjectServiceClient) PaginateSubjects(ctx context.Context, in *PaginateSubjectRequest, opts ...grpc.CallOption) (*PaginateSubjectResponse, error) {
 	out := new(PaginateSubjectResponse)
-	err := c.cc.Invoke(ctx, "/SubjectService/PaginateSubjects", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/PaginateSubjects", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (c *subjectServiceClient) PaginateSubjects(ctx context.Context, in *Paginat
 
 func (c *subjectServiceClient) GetSubjectById(ctx context.Context, in *GetSubjectByIdRequest, opts ...grpc.CallOption) (*GetSubjectByIdResponse, error) {
 	out := new(GetSubjectByIdResponse)
-	err := c.cc.Invoke(ctx, "/SubjectService/GetSubjectById", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/GetSubjectById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (c *subjectServiceClient) GetSubjectById(ctx context.Context, in *GetSubjec
 
 func (c *subjectServiceClient) ValidateSubjectId(ctx context.Context, in *ValidateSubjectIdRequest, opts ...grpc.CallOption) (*ValidateSubjectIdResponse, error) {
 	out := new(ValidateSubjectIdResponse)
-	err := c.cc.Invoke(ctx, "/SubjectService/ValidateSubjectId", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/ValidateSubjectId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (c *subjectServiceClient) ValidateSubjectId(ctx context.Context, in *Valida
 
 func (c *subjectServiceClient) CreateSubject(ctx context.Context, in *CreateSubjectRequest, opts ...grpc.CallOption) (*CreateSubjectResponse, error) {
 	out := new(CreateSubjectResponse)
-	err := c.cc.Invoke(ctx, "/SubjectService/CreateSubject", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/CreateSubject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (c *subjectServiceClient) CreateSubject(ctx context.Context, in *CreateSubj
 
 func (c *subjectServiceClient) UpdateSubject(ctx context.Context, in *UpdateSubjectRequest, opts ...grpc.CallOption) (*UpdateSubjectResponse, error) {
 	out := new(UpdateSubjectResponse)
-	err := c.cc.Invoke(ctx, "/SubjectService/UpdateSubject", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/UpdateSubject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func (c *subjectServiceClient) UpdateSubject(ctx context.Context, in *UpdateSubj
 
 func (c *subjectServiceClient) DeleteSubject(ctx context.Context, in *DeleteSubjectRequest, opts ...grpc.CallOption) (*DeleteSubjectResponse, error) {
 	out := new(DeleteSubjectResponse)
-	err := c.cc.Invoke(ctx, "/SubjectService/DeleteSubject", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/DeleteSubject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +99,7 @@ func (c *subjectServiceClient) DeleteSubject(ctx context.Context, in *DeleteSubj
 
 func (c *subjectServiceClient) CreateSection(ctx context.Context, in *CreateSectionRequest, opts ...grpc.CallOption) (*CreateSectionResponse, error) {
 	out := new(CreateSectionResponse)
-	err := c.cc.Invoke(ctx, "/SubjectService/CreateSection", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/CreateSection", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func (c *subjectServiceClient) CreateSection(ctx context.Context, in *CreateSect
 
 func (c *subjectServiceClient) UpdateSection(ctx context.Context, in *UpdateSectionRequest, opts ...grpc.CallOption) (*UpdateSectionResponse, error) {
 	out := new(UpdateSectionResponse)
-	err := c.cc.Invoke(ctx, "/SubjectService/UpdateSection", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/UpdateSection", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (c *subjectServiceClient) UpdateSection(ctx context.Context, in *UpdateSect
 
 func (c *subjectServiceClient) DeleteSection(ctx context.Context, in *DeleteSectionRequest, opts ...grpc.CallOption) (*DeleteSectionResponse, error) {
 	out := new(DeleteSectionResponse)
-	err := c.cc.Invoke(ctx, "/SubjectService/DeleteSection", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/DeleteSection", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +126,7 @@ func (c *subjectServiceClient) DeleteSection(ctx context.Context, in *DeleteSect
 
 func (c *subjectServiceClient) PaginatePostBySubject(ctx context.Context, in *PaginatePostBySubjectRequest, opts ...grpc.CallOption) (*PaginatePostBySubjectResponse, error) {
 	out := new(PaginatePostBySubjectResponse)
-	err := c.cc.Invoke(ctx, "/SubjectService/PaginatePostBySubject", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/PaginatePostBySubject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ func (c *subjectServiceClient) PaginatePostBySubject(ctx context.Context, in *Pa
 
 func (c *subjectServiceClient) PaginateFileBySubject(ctx context.Context, in *PaginateFileBySubjectRequest, opts ...grpc.CallOption) (*PaginateFileBySubjectResponse, error) {
 	out := new(PaginateFileBySubjectResponse)
-	err := c.cc.Invoke(ctx, "/SubjectService/PaginateFileBySubject", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/PaginateFileBySubject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -220,7 +220,7 @@ func _SubjectService_PaginateSubjects_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SubjectService/PaginateSubjects",
+		FullMethod: "/subject.SubjectService/PaginateSubjects",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubjectServiceServer).PaginateSubjects(ctx, req.(*PaginateSubjectRequest))
@@ -238,7 +238,7 @@ func _SubjectService_GetSubjectById_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SubjectService/GetSubjectById",
+		FullMethod: "/subject.SubjectService/GetSubjectById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubjectServiceServer).GetSubjectById(ctx, req.(*GetSubjectByIdRequest))
@@ -256,7 +256,7 @@ func _SubjectService_ValidateSubjectId_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SubjectService/ValidateSubjectId",
+		FullMethod: "/subject.SubjectService/ValidateSubjectId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubjectServiceServer).ValidateSubjectId(ctx, req.(*ValidateSubjectIdRequest))
@@ -274,7 +274,7 @@ func _SubjectService_CreateSubject_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SubjectService/CreateSubject",
+		FullMethod: "/subject.SubjectService/CreateSubject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubjectServiceServer).CreateSubject(ctx, req.(*CreateSubjectRequest))
@@ -292,7 +292,7 @@ func _SubjectService_UpdateSubject_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SubjectService/UpdateSubject",
+		FullMethod: "/subject.SubjectService/UpdateSubject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubjectServiceServer).UpdateSubject(ctx, req.(*UpdateSubjectRequest))
@@ -310,7 +310,7 @@ func _SubjectService_DeleteSubject_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SubjectService/DeleteSubject",
+		FullMethod: "/subject.SubjectService/DeleteSubject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubjectServiceServer).DeleteSubject(ctx, req.(*DeleteSubjectRequest))
@@ -328,7 +328,7 @@ func _SubjectService_CreateSection_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SubjectService/CreateSection",
+		FullMethod: "/subject.SubjectService/CreateSection",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubjectServiceServer).CreateSection(ctx, req.(*CreateSectionRequest))
@@ -346,7 +346,7 @@ func _SubjectService_UpdateSection_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SubjectService/UpdateSection",
+		FullMethod: "/subject.SubjectService/UpdateSection",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubjectServiceServer).UpdateSection(ctx, req.(*UpdateSectionRequest))
@@ -364,7 +364,7 @@ func _SubjectService_DeleteSection_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SubjectService/DeleteSection",
+		FullMethod: "/subject.SubjectService/DeleteSection",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubjectServiceServer).DeleteSection(ctx, req.(*DeleteSectionRequest))
@@ -382,7 +382,7 @@ func _SubjectService_PaginatePostBySubject_Handler(srv interface{}, ctx context.
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SubjectService/PaginatePostBySubject",
+		FullMethod: "/subject.SubjectService/PaginatePostBySubject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubjectServiceServer).PaginatePostBySubject(ctx, req.(*PaginatePostBySubjectRequest))
@@ -400,7 +400,7 @@ func _SubjectService_PaginateFileBySubject_Handler(srv interface{}, ctx context.
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SubjectService/PaginateFileBySubject",
+		FullMethod: "/subject.SubjectService/PaginateFileBySubject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubjectServiceServer).PaginateFileBySubject(ctx, req.(*PaginateFileBySubjectRequest))
@@ -412,7 +412,7 @@ func _SubjectService_PaginateFileBySubject_Handler(srv interface{}, ctx context.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var SubjectService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "SubjectService",
+	ServiceName: "subject.SubjectService",
 	HandlerType: (*SubjectServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
