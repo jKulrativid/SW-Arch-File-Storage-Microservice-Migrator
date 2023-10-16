@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package subject;
+
 option go_package = "./subject";
 
 import "entity.proto";
