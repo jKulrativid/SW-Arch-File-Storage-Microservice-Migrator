@@ -28,6 +28,7 @@ type SubjectServiceClient interface {
 	CreateSubject(ctx context.Context, in *CreateSubjectRequest, opts ...grpc.CallOption) (*CreateSubjectResponse, error)
 	UpdateSubject(ctx context.Context, in *UpdateSubjectRequest, opts ...grpc.CallOption) (*UpdateSubjectResponse, error)
 	DeleteSubject(ctx context.Context, in *DeleteSubjectRequest, opts ...grpc.CallOption) (*DeleteSubjectResponse, error)
+	ValidateSection(ctx context.Context, in *ValidateSectionRequest, opts ...grpc.CallOption) (*ValidateSectionResponse, error)
 	CreateSection(ctx context.Context, in *CreateSectionRequest, opts ...grpc.CallOption) (*CreateSectionResponse, error)
 	UpdateSection(ctx context.Context, in *UpdateSectionRequest, opts ...grpc.CallOption) (*UpdateSectionResponse, error)
 	DeleteSection(ctx context.Context, in *DeleteSectionRequest, opts ...grpc.CallOption) (*DeleteSectionResponse, error)
@@ -97,6 +98,15 @@ func (c *subjectServiceClient) DeleteSubject(ctx context.Context, in *DeleteSubj
 	return out, nil
 }
 
+func (c *subjectServiceClient) ValidateSection(ctx context.Context, in *ValidateSectionRequest, opts ...grpc.CallOption) (*ValidateSectionResponse, error) {
+	out := new(ValidateSectionResponse)
+	err := c.cc.Invoke(ctx, "/subject.SubjectService/ValidateSection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *subjectServiceClient) CreateSection(ctx context.Context, in *CreateSectionRequest, opts ...grpc.CallOption) (*CreateSectionResponse, error) {
 	out := new(CreateSectionResponse)
 	err := c.cc.Invoke(ctx, "/subject.SubjectService/CreateSection", in, out, opts...)
@@ -152,6 +162,7 @@ type SubjectServiceServer interface {
 	CreateSubject(context.Context, *CreateSubjectRequest) (*CreateSubjectResponse, error)
 	UpdateSubject(context.Context, *UpdateSubjectRequest) (*UpdateSubjectResponse, error)
 	DeleteSubject(context.Context, *DeleteSubjectRequest) (*DeleteSubjectResponse, error)
+	ValidateSection(context.Context, *ValidateSectionRequest) (*ValidateSectionResponse, error)
 	CreateSection(context.Context, *CreateSectionRequest) (*CreateSectionResponse, error)
 	UpdateSection(context.Context, *UpdateSectionRequest) (*UpdateSectionResponse, error)
 	DeleteSection(context.Context, *DeleteSectionRequest) (*DeleteSectionResponse, error)
@@ -181,6 +192,9 @@ func (UnimplementedSubjectServiceServer) UpdateSubject(context.Context, *UpdateS
 }
 func (UnimplementedSubjectServiceServer) DeleteSubject(context.Context, *DeleteSubjectRequest) (*DeleteSubjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubject not implemented")
+}
+func (UnimplementedSubjectServiceServer) ValidateSection(context.Context, *ValidateSectionRequest) (*ValidateSectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateSection not implemented")
 }
 func (UnimplementedSubjectServiceServer) CreateSection(context.Context, *CreateSectionRequest) (*CreateSectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSection not implemented")
@@ -318,6 +332,24 @@ func _SubjectService_DeleteSubject_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SubjectService_ValidateSection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateSectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubjectServiceServer).ValidateSection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/subject.SubjectService/ValidateSection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubjectServiceServer).ValidateSection(ctx, req.(*ValidateSectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SubjectService_CreateSection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateSectionRequest)
 	if err := dec(in); err != nil {
@@ -438,6 +470,10 @@ var SubjectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteSubject",
 			Handler:    _SubjectService_DeleteSubject_Handler,
+		},
+		{
+			MethodName: "ValidateSection",
+			Handler:    _SubjectService_ValidateSection_Handler,
 		},
 		{
 			MethodName: "CreateSection",
