@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type FileUploadServiceClient interface {
 	Upload(ctx context.Context, opts ...grpc.CallOption) (FileUploadService_UploadClient, error)
 	Download(ctx context.Context, in *FileDownloadRequest, opts ...grpc.CallOption) (FileUploadService_DownloadClient, error)
+	DownloadWithAuth(ctx context.Context, in *FileDownloadRequest, opts ...grpc.CallOption) (FileUploadService_DownloadWithAuthClient, error)
 	Delete(ctx context.Context, in *FileDeleteRequest, opts ...grpc.CallOption) (*FileDeleteResponse, error)
 	ShareFile(ctx context.Context, in *ShareFileRequest, opts ...grpc.CallOption) (*ShareFileResponse, error)
 	CreateBookmarkFile(ctx context.Context, in *CreateBookmarkFileRequest, opts ...grpc.CallOption) (*CreateBookmarkFileResponse, error)
@@ -106,6 +107,38 @@ func (x *fileUploadServiceDownloadClient) Recv() (*FileDownloadResponse, error) 
 	return m, nil
 }
 
+func (c *fileUploadServiceClient) DownloadWithAuth(ctx context.Context, in *FileDownloadRequest, opts ...grpc.CallOption) (FileUploadService_DownloadWithAuthClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FileUploadService_ServiceDesc.Streams[2], "/filestorage.FileUploadService/DownloadWithAuth", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileUploadServiceDownloadWithAuthClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FileUploadService_DownloadWithAuthClient interface {
+	Recv() (*FileDownloadResponse, error)
+	grpc.ClientStream
+}
+
+type fileUploadServiceDownloadWithAuthClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileUploadServiceDownloadWithAuthClient) Recv() (*FileDownloadResponse, error) {
+	m := new(FileDownloadResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *fileUploadServiceClient) Delete(ctx context.Context, in *FileDeleteRequest, opts ...grpc.CallOption) (*FileDeleteResponse, error) {
 	out := new(FileDeleteResponse)
 	err := c.cc.Invoke(ctx, "/filestorage.FileUploadService/Delete", in, out, opts...)
@@ -166,6 +199,7 @@ func (c *fileUploadServiceClient) SearchFile(ctx context.Context, in *SearchFile
 type FileUploadServiceServer interface {
 	Upload(FileUploadService_UploadServer) error
 	Download(*FileDownloadRequest, FileUploadService_DownloadServer) error
+	DownloadWithAuth(*FileDownloadRequest, FileUploadService_DownloadWithAuthServer) error
 	Delete(context.Context, *FileDeleteRequest) (*FileDeleteResponse, error)
 	ShareFile(context.Context, *ShareFileRequest) (*ShareFileResponse, error)
 	CreateBookmarkFile(context.Context, *CreateBookmarkFileRequest) (*CreateBookmarkFileResponse, error)
@@ -184,6 +218,9 @@ func (UnimplementedFileUploadServiceServer) Upload(FileUploadService_UploadServe
 }
 func (UnimplementedFileUploadServiceServer) Download(*FileDownloadRequest, FileUploadService_DownloadServer) error {
 	return status.Errorf(codes.Unimplemented, "method Download not implemented")
+}
+func (UnimplementedFileUploadServiceServer) DownloadWithAuth(*FileDownloadRequest, FileUploadService_DownloadWithAuthServer) error {
+	return status.Errorf(codes.Unimplemented, "method DownloadWithAuth not implemented")
 }
 func (UnimplementedFileUploadServiceServer) Delete(context.Context, *FileDeleteRequest) (*FileDeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
@@ -260,6 +297,27 @@ type fileUploadServiceDownloadServer struct {
 }
 
 func (x *fileUploadServiceDownloadServer) Send(m *FileDownloadResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _FileUploadService_DownloadWithAuth_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(FileDownloadRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FileUploadServiceServer).DownloadWithAuth(m, &fileUploadServiceDownloadWithAuthServer{stream})
+}
+
+type FileUploadService_DownloadWithAuthServer interface {
+	Send(*FileDownloadResponse) error
+	grpc.ServerStream
+}
+
+type fileUploadServiceDownloadWithAuthServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileUploadServiceDownloadWithAuthServer) Send(m *FileDownloadResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -412,6 +470,11 @@ var FileUploadService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "Download",
 			Handler:       _FileUploadService_Download_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "DownloadWithAuth",
+			Handler:       _FileUploadService_DownloadWithAuth_Handler,
 			ServerStreams: true,
 		},
 	},

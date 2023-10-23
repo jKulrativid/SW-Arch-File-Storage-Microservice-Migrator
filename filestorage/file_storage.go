@@ -123,9 +123,6 @@ func (f *FileStorageService) Upload(stream filestorage_grpc.FileUploadService_Up
 }
 
 func (f *FileStorageService) Download(req *filestorage_grpc.FileDownloadRequest, stream filestorage_grpc.FileUploadService_DownloadServer) error {
-	if !f.IsUserCanAccessFile(stream.Context(), req.UserId, req.FileId) {
-		return errors.New("User can't access this file")
-	}
 	obj, err := f.minio.DownloadFile(req.FileId)
 	if err != nil {
 		return err
@@ -170,6 +167,13 @@ func (f *FileStorageService) Download(req *filestorage_grpc.FileDownloadRequest,
 		}
 	}
 	return nil
+}
+
+func (f *FileStorageService) DownloadWithAuth(req *filestorage_grpc.FileDownloadRequest, stream filestorage_grpc.FileUploadService_DownloadWithAuthServer) error {
+	if !f.IsUserCanAccessFile(stream.Context(), req.UserId, req.FileId) {
+		return errors.New("User can't access this file")
+	}
+	return f.Download(req, stream)
 }
 
 func (f *FileStorageService) Delete(ctx context.Context, req *filestorage_grpc.FileDeleteRequest) (*filestorage_grpc.FileDeleteResponse, error) {
