@@ -136,7 +136,11 @@ func (f *FileStorageService) Download(req *filestorage_grpc.FileDownloadRequest,
 
 	sendMetaData := false
 	fileSize := uint32(info.Size)
-	fileName := info.Key
+	fileInfo, err := f.fileInformationRepo.GetFileInformation(stream.Context(), req.FileId)
+	if err != nil {
+		return err
+	}
+	fileName := fileInfo.FileName
 
 	buffer := make([]byte, 1024)
 	isEOF := false
