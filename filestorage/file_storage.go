@@ -208,9 +208,6 @@ func (f *FileStorageService) ShareFile(ctx context.Context, req *filestorage_grp
 }
 
 func (f *FileStorageService) CreateBookmarkFile(ctx context.Context, req *filestorage_grpc.CreateBookmarkFileRequest) (*filestorage_grpc.CreateBookmarkFileResponse, error) {
-	if !f.IsUserCanAccessFile(ctx, req.UserId, req.FileId) {
-		return nil, errors.New("User can't bookmark this file")
-	}
 	fileID, err := f.bookmarkFileRepo.CreateBookmark(ctx, req.UserId, req.FileId)
 	if err != nil {
 		return nil, err
@@ -218,6 +215,13 @@ func (f *FileStorageService) CreateBookmarkFile(ctx context.Context, req *filest
 	return &filestorage_grpc.CreateBookmarkFileResponse{
 		FileId: fileID,
 	}, nil
+}
+
+func (f *FileStorageService) CreateBookmarkFileWithAuth(ctx context.Context, req *filestorage_grpc.CreateBookmarkFileRequest) (*filestorage_grpc.CreateBookmarkFileResponse, error) {
+	if !f.IsUserCanAccessFile(ctx, req.UserId, req.FileId) {
+		return nil, errors.New("User can't bookmark this file")
+	}
+	return f.CreateBookmarkFile(ctx, req)
 }
 
 func (f *FileStorageService) DeleteBookmarkFile(ctx context.Context, req *filestorage_grpc.DeleteBookmarkFileRequest) (*filestorage_grpc.DeleteBookmarkFileResponse, error) {

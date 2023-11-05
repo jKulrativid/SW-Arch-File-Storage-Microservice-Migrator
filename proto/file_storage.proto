@@ -94,6 +94,8 @@ service FileUploadService {
   rpc ShareFile(ShareFileRequest) returns (ShareFileResponse);
   rpc CreateBookmarkFile(CreateBookmarkFileRequest)
       returns (CreateBookmarkFileResponse);
+  rpc CreateBookmarkFileWithAuth(CreateBookmarkFileRequest)
+      returns (CreateBookmarkFileResponse);
   rpc DeleteBookmarkFile(DeleteBookmarkFileRequest)
       returns (DeleteBookmarkFileResponse);
   rpc GetBookmarkFiles(GetBookmarkFilesRequest)
